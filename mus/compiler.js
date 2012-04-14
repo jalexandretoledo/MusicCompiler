@@ -6,6 +6,31 @@ var max = function(a, b) {
     }
 };
 
+var notes = { a: 10, b: 12, c: 1, d: 3, e: 5, f: 6, g: 8 };
+var re = /^([a-g])([b#]?)(\d+)$/;
+
+var getPitch = function(p) {
+    var match = p.toLowerCase().match(re);
+    var n, a, o, result = 0;
+
+    if (match) {
+        n = match[1]; // note
+        a = match[2]; // bemol or sharp
+        o = match[3]; // octave
+
+        result = notes[n];
+        if (a) {
+            if (a === "b") {
+                --result;
+            } else if (a === "#") {
+                ++result;
+            }
+        }
+        result = result + 11 + (12 * parseInt(o));
+    }
+    return result;
+}
+
 var compile = function(musexpr) {
     var result = [];
 
@@ -13,7 +38,7 @@ var compile = function(musexpr) {
         var endLeft, endRight;
 
         if (node.tag === "note") {
-            result.push( { tag: 'note', pitch: node.pitch, start: startNote, dur: node.dur } );
+            result.push( { tag: 'note', pitch: getPitch(node.pitch), start: startNote, dur: node.dur } );
             return (startNote + node.dur);
 
         } else if (node.tag === "rest") {
@@ -61,3 +86,7 @@ var melody_mus =
 console.log(melody_mus);
 console.log(compile(melody_mus));
 
+console.log("a0 = " + getPitch("a0"));
+console.log("a1 = " + getPitch("a1"));
+console.log("a#3 = " + getPitch("a#3"));
+console.log("ab3 = " + getPitch("ab3"));
