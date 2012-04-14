@@ -36,6 +36,7 @@ var compile = function(musexpr) {
 
     var calc = function(node, startNote) {
         var endLeft, endRight;
+        var repeat;
 
         if (node.tag === "note") {
             result.push( { tag: 'note', pitch: getPitch(node.pitch), start: startNote, dur: node.dur } );
@@ -53,6 +54,12 @@ var compile = function(musexpr) {
             startNote = calc(node.left, startNote);
             return calc(node.right, startNote);
 
+        } else if (node.tag === "repeat") {
+            repeat = parseInt(node.count);
+            for (var i = 0; i < repeat; ++i) {
+                startNote = calc(node.section, startNote);
+            }
+            return startNote;
         }
     };
 
@@ -77,7 +84,12 @@ var melody_mus =
              { 
                tag: 'par',
                left: { tag: 'note', pitch: 'e3', dur: 500 },
-               right: { tag: 'note', pitch: 'f4', dur: 250 } 
+               right:
+                {
+                  tag: 'repeat',
+                  section: { tag: 'note', pitch: 'f4', dur: 250 },
+                  count: 3
+                }
              } 
           }
         }
