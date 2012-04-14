@@ -16,6 +16,9 @@ var compile = function(musexpr) {
             result.push( { tag: 'note', pitch: node.pitch, start: startNote, dur: node.dur } );
             return (startNote + node.dur);
 
+        } else if (node.tag === "rest") {
+            return (startNote + node.duration);
+
         } else if (node.tag === "par") {
             endLeft = calc(node.left, startNote);
             endRight = calc(node.right, startNote);
@@ -35,13 +38,25 @@ var compile = function(musexpr) {
 var melody_mus = 
     { tag: 'seq',
       left: 
-       { tag: 'seq',
-         left: { tag: 'note', pitch: 'a4', dur: 250 },
-         right: { tag: 'note', pitch: 'b4', dur: 250 } },
+       { tag: 'par',
+         left: { tag: 'note', pitch: 'a3', dur: 250 },
+         right: { tag: 'note', pitch: 'b4', dur: 500 } },
       right:
        { tag: 'seq',
-         left: { tag: 'note', pitch: 'c4', dur: 500 },
-         right: { tag: 'note', pitch: 'd4', dur: 500 } } };
+         left: { tag: 'note', pitch: 'c3', dur: 300 },
+         right: 
+          { 
+            tag: 'seq',
+            left: { tag: 'rest', duration: 500 },
+            right:
+             { 
+               tag: 'par',
+               left: { tag: 'note', pitch: 'e3', dur: 500 },
+               right: { tag: 'note', pitch: 'f4', dur: 250 } 
+             } 
+          }
+        }
+};
 
 console.log(melody_mus);
 console.log(compile(melody_mus));
